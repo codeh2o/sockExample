@@ -16,6 +16,18 @@ interface FileCopyRunner {
 }
 
 public class FileCopyDemo {
+    private static final int ROUNDS = 5;
+    private static void benchMark(FileCopyRunner fileCopyRunner,File source,File target){
+        long elapsed = 0;
+        for (int i = 0; i < ROUNDS; i++) {
+            long startTime = System.currentTimeMillis();
+            fileCopyRunner.copyFile(source,target);
+            long endTime = System.currentTimeMillis();
+            elapsed = endTime-startTime;
+            target.delete();
+        }
+        System.out.println(fileCopyRunner+":"+elapsed/ROUNDS);
+    }
 
     public static void close(Closeable closeable) {
         if (closeable != null) {
@@ -30,6 +42,11 @@ public class FileCopyDemo {
     public static void main(String[] args) {
 
         FileCopyRunner noBufferStreamCopy = new FileCopyRunner() {
+            @Override
+            public String toString() {
+                return "noBufferStreamCopy";
+            }
+
             public void copyFile(File source, File target) {
                 InputStream fin = null;
                 OutputStream fout = null;
@@ -52,11 +69,19 @@ public class FileCopyDemo {
                 }
 
 
+
+
             }
         };
 
         FileCopyRunner BufferStreamCopy = new FileCopyRunner() {
+            @Override
+            public String toString() {
+                return "BufferStreamCopy";
+            }
+
             public void copyFile(File source, File target) {
+
                 BufferedInputStream fin = null;
                 BufferedOutputStream fout = null;
                 try {
@@ -82,7 +107,14 @@ public class FileCopyDemo {
         };
 
         FileCopyRunner nioBufferCopy = new FileCopyRunner() {
+            @Override
+            public String toString() {
+                return "nioBufferCopy";
+            }
+
             public void copyFile(File source, File target) {
+
+
                 FileChannel fin = null;
                 FileChannel fout = null;
 
@@ -118,7 +150,14 @@ public class FileCopyDemo {
         };
 
         FileCopyRunner nioTransferCopy = new FileCopyRunner() {
+            @Override
+            public String toString() {
+                return "nioTransferCopy";
+            }
+
             public void copyFile(File source, File target) {
+
+
                 FileChannel fin = null;
                 FileChannel fout = null;
 
@@ -127,9 +166,9 @@ public class FileCopyDemo {
                     fout = new FileOutputStream(target).getChannel();
                     long transferedBytesCount = 0l;
                     long size = fin.size();
-                    while (transferedBytesCount < size) {
+                    while (transferedBytesCount != size) {
                         //传输了的字节数
-                        transferedBytesCount += fin.transferTo(0, fout.size(), fout);
+                        transferedBytesCount += fin.transferTo(0, size, fout);
                     }
 
                 } catch (FileNotFoundException e) {
@@ -142,6 +181,12 @@ public class FileCopyDemo {
                 }
             }
         };
+        File smallFile = new File("E:\\java\\test\\新建文本文档.txt");
+        File smallFileCopy = new File("E:\\java\\test\\新建文本文档2.txt");
+        benchMark(noBufferStreamCopy,smallFile,smallFileCopy);
+        benchMark(BufferStreamCopy,smallFile,smallFileCopy);
+        benchMark(nioBufferCopy,smallFile,smallFileCopy);
+        benchMark(nioTransferCopy,smallFile,smallFileCopy);
 
     }
 }
