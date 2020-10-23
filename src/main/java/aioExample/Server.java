@@ -97,9 +97,14 @@ public class Server {
                 buffer.flip();
                 info.put("type","write");
                 clientChannel.write(buffer,info,this);
-
+                buffer.clear();
             }else if("write".equals(info.get("type"))){
+                ByteBuffer buffer = ByteBuffer.allocate(1024);
 
+                info.put("type","read");
+                info.put("buffer",buffer);
+
+                clientChannel.read(buffer,info,this);
             }
         }
 
