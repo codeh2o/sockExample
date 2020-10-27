@@ -10,7 +10,7 @@ import io.netty.handler.logging.LoggingHandler;
 
 /**
  * @program: sockExample
- * @description:
+ * @description:回音壁
  * @author: yetin
  * @create: 2020-10-27 17:17
  **/
@@ -26,7 +26,11 @@ public class Server {
         serverBootstrap.group(bossGroup,workerGroup);
         serverBootstrap.channel(NioServerSocketChannel.class);
         serverBootstrap.option(ChannelOption.SO_BACKLOG, 100);
+
+        //
         serverBootstrap.handler(new LoggingHandler(LogLevel.INFO));
+
+        //
         serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
             public void initChannel(SocketChannel ch) throws Exception {
