@@ -27,10 +27,10 @@ public class Server {
         serverBootstrap.channel(NioServerSocketChannel.class);
         serverBootstrap.option(ChannelOption.SO_BACKLOG, 100);
 
-        //
+        //监听Bootstrap的动作
         serverBootstrap.handler(new LoggingHandler(LogLevel.INFO));
 
-        //
+        //监听已经连接的客户端的Channel的动作和状态
         serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
             public void initChannel(SocketChannel ch) throws Exception {
