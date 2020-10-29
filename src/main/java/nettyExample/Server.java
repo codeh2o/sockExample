@@ -5,6 +5,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.FixedLengthFrameDecoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
@@ -37,6 +38,7 @@ public class Server {
                 ChannelPipeline p = ch.pipeline();
                 // 可以添加多个子Handler
                 p.addLast(new LoggingHandler(LogLevel.INFO));
+                p.addLast(new FixedLengthFrameDecoder(3));
                 p.addLast(new EchoServerHandler());
             }
         });
